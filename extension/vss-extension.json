@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "adaptivefeatureprioritization",
   "name": "Adaptive Feature Prioritization for Azure DevOps",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "vishnunair",
   "description": "Prioritize Azure Boards work items with an adaptive Elo ranking engine instead of exhaustive pairwise comparison.",
   "public": false,
