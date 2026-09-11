@@ -15,6 +15,7 @@ export interface SharedQueryService {
   listQueries(projectId: string): Promise<SharedQueryNode[]>
   searchQueries(projectId: string, term: string): Promise<SharedQueryNode[]>
   runQuery(projectId: string, queryId: string): Promise<WorkItem[]>
+  refreshQueryResults(projectId: string, queryId: string): Promise<WorkItem[]>
 }
 
 function toNode(item: RawQueryHierarchyItem): SharedQueryNode {
@@ -37,7 +38,7 @@ export class AzureDevOpsSharedQueryService implements SharedQueryService {
   private readonly workItemService = new AzureDevOpsWorkItemService()
 
   async listQueries(projectId: string): Promise<SharedQueryNode[]> {
-    const hierarchy = await this.client.getQueries(projectId, undefined, 3, false) as unknown as RawQueryHierarchyItem[]
+    const hierarchy = await this.client.getQueries(projectId, undefined, 2, false) as unknown as RawQueryHierarchyItem[]
     return hierarchy.map(toNode)
   }
 
@@ -52,5 +53,9 @@ export class AzureDevOpsSharedQueryService implements SharedQueryService {
     const result = await this.client.queryById(queryId, projectId)
     const ids = (result.workItems ?? []).map((item) => item.id).filter((id): id is number => id !== undefined)
     return this.workItemService.getWorkItemsByIds(projectId, ids)
+  }
+
+  async refreshQueryResults(projectId: string, queryId: string): Promise<WorkItem[]> {
+    return this.runQuery(projectId, queryId)
   }
 }

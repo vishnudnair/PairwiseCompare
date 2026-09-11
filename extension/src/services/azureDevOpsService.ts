@@ -5,6 +5,7 @@ import type { WorkItem, WorkItemType } from '../models/domain'
 
 export type WorkItemQuery = {
   projectId: string
+  projectName: string
   areaPath?: string
   iterationPath?: string
   types: WorkItemType[]
@@ -45,7 +46,8 @@ export class AzureDevOpsWorkItemService implements WorkItemService {
 
   async queryWorkItems(query: WorkItemQuery): Promise<WorkItem[]> {
     const typeClause = query.types.map((type) => `[System.WorkItemType] = '${type.replaceAll("'", "''")}'`).join(' OR ')
-    const clauses = [`[System.TeamProject] = '${query.projectId.replaceAll("'", "''")}'`, `(${typeClause})`]
+    const project = query.projectName.replaceAll("'", "''")
+    const clauses = [`[System.TeamProject] = '${project}'`, `(${typeClause})`]
     if (query.areaPath) clauses.push(`[System.AreaPath] UNDER '${query.areaPath.replaceAll("'", "''")}'`)
     if (query.iterationPath) clauses.push(`[System.IterationPath] UNDER '${query.iterationPath.replaceAll("'", "''")}'`)
     const wiql: Wiql = { query: `SELECT [System.Id] FROM WorkItems WHERE ${clauses.join(' AND ')} ORDER BY [System.Id]` }
@@ -62,9 +64,8 @@ export class AzureDevOpsWorkItemService implements WorkItemService {
 
   async updateRanking(project: string, workItemId: number, score: number, rank: number): Promise<void> {
     const operations: JsonPatchDocument = [
-      { op: 'add', path: '/fields/Custom.EloPriorityScore', value: Math.round(score) },
-      { op: 'add', path: '/fields/Custom.EloPriorityRank', value: rank },
-      { op: 'add', path: '/fields/System.Tags', value: `Elo-Rank-${Math.min(rank, 3)}` },
+      { op: 'add', path: '/fields/Microsoft.VSTS.Common.BusinessValue', value: Math.round(score) },
+      { op: 'add', path: '/fields/Microsoft.VSTS.Common.Priority', value: Math.min(Math.max(rank, 1), 4) },
     ]
     await this.client.updateWorkItem(operations, workItemId, project)
   }

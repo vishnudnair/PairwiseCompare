@@ -2,17 +2,18 @@
   "manifestVersion": 1,
   "id": "adaptivefeatureprioritization",
   "name": "Adaptive Feature Prioritization for Azure DevOps",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "publisher": "vishnunair",
   "description": "Prioritize Azure Boards work items with an adaptive Elo ranking engine instead of exhaustive pairwise comparison.",
   "public": false,
   "categories": ["Azure Boards"],
   "targets": [{ "id": "Microsoft.VisualStudio.Services" }],
   "files": [{ "path": "dist", "addressable": true }],
+  "scopes": ["vso.work"],
   "contributions": [{
     "id": "adaptive-prioritization-hub",
     "type": "ms.vss-web.hub",
-    "targets": ["ms.vss-work-web.work-items-hub-group"],
+    "targets": ["ms.vss-work-web.work-hub-group"],
     "properties": {
       "name": "Adaptive Prioritization",
       "uri": "dist/index.html"

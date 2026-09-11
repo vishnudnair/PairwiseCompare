@@ -3,6 +3,7 @@ export type WorkItemType = (typeof supportedWorkItemTypes)[number]
 export type SessionStatus = 'Draft' | 'Active' | 'Completed' | 'Archived'
 export type VoteSelection = 'a' | 'b' | 'equal' | 'skip'
 export type UserRole = 'Administrator' | 'Facilitator' | 'Stakeholder' | 'Viewer'
+export type SyncStatus = 'Not Synced' | 'Pending' | 'Synced'
 
 export type SharedQueryNode = {
   id: string
@@ -10,6 +11,12 @@ export type SharedQueryNode = {
   path: string
   isFolder: boolean
   children?: SharedQueryNode[]
+}
+
+export type QueryReference = {
+  id: string
+  name: string
+  path: string
 }
 
 export type SessionConfiguration = {
@@ -61,9 +68,14 @@ export type PrioritizationSession = {
   createdBy: string
   createdAt: string
   updatedAt: string
-  queryId?: string
-  queryName?: string
+  queryId: string
+  queryName: string
+  queryPath: string
+  lastQueryRefreshDate: string
   workItemIds: number[]
+  activeWorkItemIds: number[]
+  inactiveWorkItemIds: number[]
+  syncStatus: SyncStatus
   votes: Vote[]
   configuration: SessionConfiguration
 }
